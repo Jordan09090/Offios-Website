@@ -398,11 +398,7 @@
     <script>
         // Initialize EmailJS with your public key
         (function() {
-            emailjs.init({
-                publicKey: "T1SOqmCvewRTdEgBU",
-                blockRequest: false,  // Optional: Prevents multiple form submissions
-                limitRate: true      // Optional: Rate limiting for safety
-            });
+            emailjs.init("T1SOqmCvewRTdEgBU");
         })();
 
         // Handle plan options based on property type selection
@@ -412,7 +408,7 @@
             planSelect.innerHTML = ''; // Clear existing options
 
             if (propertyType === '598Albany') {
-                planSelect.add(new Option('All-Inclusive Private Office', 'physical_office'));
+                planSelect.add(new Option('Physical Office ($200/month)', 'physical_office'));
             } else if (propertyType === 'virtualOffice') {
                 planSelect.add(new Option('Standard Virtual Office ($20/month)', 'standard_virtual'));
                 planSelect.add(new Option('Advanced Solutions (POA)', 'advanced_virtual'));
@@ -421,56 +417,71 @@
             }
         }
 
-        // Update the form submission handler
+        // Form submission handler
         document.getElementById('contactForm').addEventListener('submit', function(event) {
             event.preventDefault();
 
+            // Get the submit button
             const submitButton = this.querySelector('button[type="submit"]');
-            const originalText = submitButton.innerHTML;
-            submitButton.innerHTML = 'Sending...';
+            const originalButtonHtml = submitButton.innerHTML;
+            
+            // Show loading state
             submitButton.disabled = true;
+            submitButton.innerHTML = '<span>Sending...</span>';
 
-            // Prepare the admin notification parameters
+            // Get form values
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const propertyType = document.getElementById('propertyType');
+            const plan = document.getElementById('plan');
+            const message = document.getElementById('message').value;
+
+            // Prepare template parameters for admin notification
             const adminTemplateParams = {
-                to_name: "Rick",  // Add recipient name
-                from_name: document.getElementById('name').value,
-                from_email: document.getElementById('email').value,
-                phone: document.getElementById('phone').value,
-                property_type: document.getElementById('propertyType').options[document.getElementById('propertyType').selectedIndex].text,
-                plan: document.getElementById('plan').options[document.getElementById('plan').selectedIndex].text,
-                message: document.getElementById('message').value,
-                reply_to: document.getElementById('email').value
+                name: name,
+                email: email,
+                phone: phone,
+                property_type: propertyType.options[propertyType.selectedIndex].text,
+                plan: plan.options[plan.selectedIndex].text,
+                message: message,
+                to_email: "ban.rick@gmail.com, bantleman.jordan@gmail.com"
             };
 
-            // Prepare the customer confirmation parameters
+            // Prepare template parameters for customer confirmation
             const customerTemplateParams = {
-                to_name: document.getElementById('name').value,
-                to_email: document.getElementById('email').value,
-                property_type: document.getElementById('propertyType').options[document.getElementById('propertyType').selectedIndex].text,
-                plan: document.getElementById('plan').options[document.getElementById('plan').selectedIndex].text,
-                message: document.getElementById('message').value
+                name: name,
+                email: email,
+                property_type: propertyType.options[propertyType.selectedIndex].text,
+                plan: plan.options[plan.selectedIndex].text,
+                message: message
             };
 
-            // Send both emails using Promise.all
+            // Send both emails
             Promise.all([
                 emailjs.send('service_cxx5rp6', 'template_vmrh9sr', adminTemplateParams),
                 emailjs.send('service_cxx5rp6', 'template_u8pja0r', customerTemplateParams)
             ])
             .then(function(responses) {
+                // Success
                 console.log('SUCCESS!', responses);
-                alert('Thank you! Your message has been sent.');
+                alert('Thank you! Your message has been sent successfully.');
                 document.getElementById('contactForm').reset();
+                updatePlanOptions(); // Reset plan options
             })
             .catch(function(error) {
+                // Error
                 console.error('FAILED...', error);
-                alert('Oops! Something went wrong. Please try again later.');
+                alert('Sorry, there was an error sending your message. Please try again later.');
             })
             .finally(function() {
-                submitButton.innerHTML = originalText;
+                // Reset button state
                 submitButton.disabled = false;
+                submitButton.innerHTML = originalButtonHtml;
             });
         });
     </script>
+
 
 </body>
 </html> 
