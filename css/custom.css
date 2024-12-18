@@ -1,0 +1,278 @@
+/* Container for the video to ensure proper alignment and spacing */
+.video-container {
+  position: relative;
+  width: 100%; /* Full width of the container */
+  padding-bottom: 56.25%; /* Aspect ratio 16:9 */
+  margin-top: 20px; /* Spacing above the video */
+  overflow: hidden; /* Ensure no overflow */
+  border-radius: 8px; /* Optional: Rounded corners */
+  background: #000; /* Fallback for video loading */
+}
+
+/* Embedded iframe styling */
+.youtube-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0; /* Remove iframe border */
+  border-radius: inherit; /* Match container's border radius */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional: Shadow effect */
+}
+
+
+.pricing-plan .row {
+  display: flex;
+  flex-wrap: wrap; /* Ensure items wrap if necessary */
+  justify-content: center; /* Center the items horizontally */
+  gap: 20px; /* Add consistent spacing between cards */
+}
+
+.col-md-6.col-lg-4 {
+  flex: 1 1 calc(33.333% - 20px); /* Default for 3 packages (landscape layout) */
+  max-width: calc(33.333% - 20px);
+}
+
+.col-md-6.col-lg-4.two-packages {
+  flex: 1 1 calc(50% - 20px); /* Adjust for 2 packages (portrait layout) */
+  max-width: calc(50% - 20px);
+}
+
+.col-md-6.col-lg-4.one-package {
+  flex: 1 1 100%; /* Adjust for 1 package (full width) */
+  max-width: 100%;
+}
+
+/* Ensure responsive behavior */
+@media (max-width: 768px) {
+  .col-md-6.col-lg-4 {
+    flex: 1 1 calc(100% - 20px); /* Stacks items in smaller screens */
+    max-width: calc(100% - 20px);
+  }
+}
+
+/* Contact Form Styling */
+.contact-section {
+  padding: 80px 0;
+}
+
+.contact-form-container {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.custom-input {
+  width: 100%;
+  padding: 12px 15px;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+.custom-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(231,202,36,0.15);
+}
+
+.custom-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23333' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+}
+
+.submit-btn {
+  width: 100%;
+  font-weight: 600;
+  padding: 12px 25px;
+  font-size: 1rem;
+}
+
+.contact-info-item {
+  background: #fff;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+  transition: transform 0.3s ease;
+}
+
+.contact-info-item:hover {
+  transform: translateY(-5px);
+}
+
+.contact-info-item i {
+  font-size: 2rem;
+}
+
+@media (max-width: 768px) {
+  .contact-form-container {
+      padding: 30px 20px;
+  }
+}
+
+/* Required Field Indicator */
+.form-label:after {
+  content: " *";
+  color: #dc3545;
+}
+
+.form-label[for="message"]:after {
+  content: none;
+}
+
+/* Success/Error Messages */
+.alert {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 5px;
+  display: none;
+}
+
+.alert-success {
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+  color: #155724;
+}
+
+.alert-danger {
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+  color: #721c24;
+}
+
+/* Loading State */
+.butn.loading {
+  position: relative;
+  color: transparent !important;
+}
+
+.butn.loading:after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  top: 50%;
+  left: 50%;
+  margin: -10px 0 0 -10px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .contact-form .card-body {
+      padding: 1.5rem;
+  }
+  
+  .contact-form .butn.md {
+      width: 100%;
+  }
+}
+
+/* Custom Scrollbar for Textarea */
+.contact-form textarea::-webkit-scrollbar {
+  width: 8px;
+}
+
+.contact-form textarea::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.contact-form textarea::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 4px;
+}
+
+.contact-form textarea::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Map Styling */
+.map-container {
+  position: relative;
+  overflow: hidden;
+  padding-top: 60%;  /* 16:9 aspect ratio */
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  border: 2px solid var(--primary-color);
+}
+
+.map-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  filter: grayscale(0.2);
+  transition: filter 0.3s ease;
+}
+
+.map-iframe:hover {
+  filter: grayscale(0);
+}
+
+/* Responsive adjustments */
+@media (max-width: 991px) {
+  .map-container {
+      padding-top: 60%;  /* Shorter on mobile */
+      margin-top: 2rem;
+  }
+}
+
+/* Call to action section styling */
+.opacity-9 {
+  opacity: 0.9;
+}
+
+/* Smooth scroll behavior for jumping to contact form */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Button hover effects */
+.butn.bg-white:hover {
+  background-color: #f8f9fa !important;
+}
+
+.butn.border-white:hover {
+  background-color: #ffffff !important;
+  color: var(--primary-color) !important;
+}
+
+.map-buttons {
+  margin-top: 1.5rem;
+}
+
+.map-buttons .butn {
+  min-width: 200px;
+  margin: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.map-buttons .butn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 768px) {
+  .map-buttons .butn {
+      display: block;
+      width: 100%;
+      margin: 0.5rem 0;
+  }
+}
