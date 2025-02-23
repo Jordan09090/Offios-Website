@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Offios - Registered Companies</title>
+    <title>Offios - Companies at this adress</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
     <style>
@@ -73,7 +73,7 @@
                 </a>
             </div>
             <h1>Offios</h1>
-            <p class="lead">Registered Companies at Our Office Locations</p>
+            <p class="lead">Current Companies at Our Office Locations</p>
         </div>
     </div>
 
@@ -116,16 +116,22 @@
             const companiesList = document.getElementById('companiesList');
             companiesList.innerHTML = '';
 
+            // Convert snapshot to array and sort alphabetically
             snapshot.forEach((childSnapshot) => {
-                const company = childSnapshot.val();
-                companies.push(company);
+                companies.push(childSnapshot.val());
+            });
+
+            // Sort companies alphabetically by name
+            companies.sort((a, b) => a.name.localeCompare(b.name));
+
+            // Display sorted companies
+            companies.forEach(company => {
                 displayCompany(company);
             });
 
             // Hide loading overlay after companies are loaded
             loadingOverlay.style.display = 'none';
         }, (error) => {
-            // Handle error and hide loading overlay
             console.error('Error loading companies:', error);
             loadingOverlay.style.display = 'none';
         });
@@ -142,17 +148,20 @@
             document.getElementById('companiesList').appendChild(div);
         }
 
-        // Search functionality
+        // Update search function to maintain alphabetical order
         document.getElementById('searchInput').addEventListener('input', (e) => {
             const searchTerm = e.target.value.toLowerCase();
             const companiesList = document.getElementById('companiesList');
             companiesList.innerHTML = '';
 
-            companies.forEach(company => {
-                if (company.name.toLowerCase().includes(searchTerm) || 
-                    company.location.toLowerCase().includes(searchTerm)) {
-                    displayCompany(company);
-                }
+            const filteredCompanies = companies.filter(company => 
+                company.name.toLowerCase().includes(searchTerm) || 
+                company.location.toLowerCase().includes(searchTerm)
+            );
+
+            // Display filtered companies (already in alphabetical order)
+            filteredCompanies.forEach(company => {
+                displayCompany(company);
             });
         });
     </script>
