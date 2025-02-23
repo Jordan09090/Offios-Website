@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offios - Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .company-card {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .office-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand">Offios Admin</a>
+            <button class="btn btn-outline-light" id="logoutBtn">Logout</button>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-6">
+                <h2>Add New Company</h2>
+                <form id="companyForm">
+                    <div class="mb-3">
+                        <label class="form-label">Company Name</label>
+                        <input type="text" class="form-control" id="companyName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Office Location</label>
+                        <input type="text" class="form-control" id="officeLocation" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Company</button>
+                </form>
+            </div>
+            <div class="col-md-6">
+                <h2>Current Companies</h2>
+                <div id="companiesList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast container for notifications -->
+    <div class="toast-container"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
+        import { getDatabase, ref, push, remove, onValue } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
+        import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-analytics.js";
+
+        // Check if user is authenticated
+        if (!localStorage.getItem('authToken')) {
+            window.location.href = 'login.html';
+        }
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAlVn-vx67tfHYnLV8MKsxk3xYaOPL7bj8",
+            authDomain: "office-registry.firebaseapp.com",
+            databaseURL: "https://office-registry-default-rtdb.firebaseio.com",
+            projectId: "office-registry",
+            storageBucket: "office-registry.firebasestorage.app",
+            messagingSenderId: "409582713742",
+            appId: "1:409582713742:web:b8730f59fb2b03356342df",
+            measurementId: "G-PW5RED0ZV9"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const db = getDatabase(app);
+        const auth = getAuth(app);
+
+        // Function to show toast notification
+        function showToast(message, type = 'success') {
+            const toastContainer = document.querySelector('.toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast align-items-center text-white bg-${type} border-0`;
+            toast.setAttribute('role', 'alert');
+            toast.setAttribute('aria-live', 'assertive');
+            toast.setAttribute('aria-atomic', 'true');
+            
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            `;
+            
+            toastContainer.appendChild(toast);
+            const bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
+            
+            // Remove toast after it's hidden
+            toast.addEventListener('hidden.bs.toast', () => {
+                toast.remove();
+            });
+        }
+
+        // Update company form submission
+        document.getElementById('companyForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const companyName = document.getElementById('companyName').value;
+            const officeLocation = document.getElementById('officeLocation').value;
+
+            push(ref(db, 'companies'), {
+                name: companyName,
+                location: officeLocation,
+                timestamp: Date.now()
+            }).then(() => {
+                showToast('Company added successfully');
+                e.target.reset();
+            }).catch(error => {
+                showToast('Error adding company: ' + error.message, 'danger');
+            });
+        });
+
+        // Display companies
+        onValue(ref(db, 'companies'), (snapshot) => {
+            const companiesList = document.getElementById('companiesList');
+            companiesList.innerHTML = '';
+
+            snapshot.forEach((childSnapshot) => {
+                const company = childSnapshot.val();
+                const div = document.createElement('div');
+                div.className = 'company-card';
+                div.innerHTML = `
+                    <h4>${company.name}</h4>
+                    <p>Location: ${company.location}</p>
+                    <button class="btn btn-danger btn-sm" onclick="removeCompany('${childSnapshot.key}')">Remove</button>
+                `;
+                companiesList.appendChild(div);
+            });
+        });
+
+        // Update remove company function
+        window.removeCompany = function(companyId) {
+            if (confirm('Are you sure you want to remove this company?')) {
+                remove(ref(db, 'companies/' + companyId))
+                    .then(() => {
+                        showToast('Company removed successfully');
+                    })
+                    .catch(error => {
+                        showToast('Error removing company: ' + error.message, 'danger');
+                    });
+            }
+        };
+
+        // Update logout
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            signOut(auth).then(() => {
+                localStorage.removeItem('authToken');
+                showToast('Logged out successfully');
+                setTimeout(() => {
+                    window.location.href = 'registeredoffices.html';
+                }, 1000);
+            }).catch(error => {
+                showToast('Error logging out: ' + error.message, 'danger');
+            });
+        });
+    </script>
+
+    <!-- Add Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 
